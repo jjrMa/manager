@@ -100,7 +100,15 @@
 
 <script>
 export default {
-
+  beforeCreate () {
+    // 从session中获取token 判断是否有token
+    const token = sessionStorage.getItem('token')
+    if (!token) {
+      // 返回登录页
+      this.$router.push({name: 'login'})
+      this.message.warning('请先登录')
+    }
+  }
 }
 </script>
 
