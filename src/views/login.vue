@@ -25,20 +25,32 @@ export default {
     }
   },
   methods: {
-    handleLogin () {
-      this.$http.post('login', this.formData)
-        .then((res) => {
-          const data = res.data
-          const {meta: {status, msg}} = data
-          if (status === 200) {
-            const token = data.data.token
-            sessionStorage.setItem('token', token)
-            this.$message.success(msg)
-          } else {
-            this.$message.error(msg)
-          }
-        })
+    async handleLogin () {
+      const res = await this.$http.post('login', this.formData)
+      const data = res.data
+      const { meta: { status, msg } } = data
+      if (status === 200) {
+        const token = data.data.token
+        sessionStorage.setItem('token', token)
+        this.$message.success(msg)
+      } else {
+        this.$message.error(msg)
+      }
     }
+    // handleLogin () {
+    //   this.$http.post('login', this.formData)
+    //     .then((res) => {
+    //       const data = res.data
+    //       const {meta: {status, msg}} = data
+    //       if (status === 200) {
+    //         const token = data.data.token
+    //         sessionStorage.setItem('token', token)
+    //         this.$message.success(msg)
+    //       } else {
+    //         this.$message.error(msg)
+    //       }
+    //     })
+    // }
   }
 }
 </script>
@@ -62,5 +74,4 @@ export default {
 .login-wrap .login-form .login-button {
   width: 100%;
 }
-
 </style>
