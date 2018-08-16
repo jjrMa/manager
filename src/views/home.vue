@@ -11,7 +11,7 @@
           <h2>电商后台管理系统</h2>
         </el-col>
         <el-col :span="1">
-          <a href="#" class="loginout">退出</a>
+          <a href="#" class="loginout" @click.prevent="handleSignout">退出</a>
         </el-col>
       </el-row>
     </el-header>
@@ -107,6 +107,16 @@ export default {
       // 返回登录页
       this.$router.push({name: 'login'})
       this.message.warning('请先登录')
+    }
+  },
+  methods: {
+    handleSignout () {
+      // 删除session中的token
+      sessionStorage.clear()
+      // 跳转到登录页
+      this.$router.push({name: 'login'})
+      // 提示
+      this.$message.success('退出成功')
     }
   }
 }
