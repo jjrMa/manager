@@ -19,6 +19,7 @@
 
     <!-- 表格 -->
        <el-table
+       v-loading="loading"
       :data="list"
       style="width: 100%">
       <!-- 序号 -->
@@ -95,7 +96,8 @@ export default {
       //   name: '王小虎',
       //   address: '上海市普陀区金沙江路 1516 弄'
       // }]
-      list: []
+      list: [],
+      loading: true
     }
   },
   created () {
@@ -103,6 +105,7 @@ export default {
   },
   methods: {
     async loadData () {
+      this.loading = true
       const res = await this.$http.get('users', {
         headers: {
           Authorization: window.sessionStorage.getItem('token')
@@ -113,7 +116,7 @@ export default {
         }
       })
       // console.log(res)
-
+      this.loading = false
       const data = res.data
       const { meta: { msg, status } } = data
       if (status === 200) {
