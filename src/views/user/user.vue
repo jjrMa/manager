@@ -28,18 +28,45 @@
     </el-table-column>
 
       <el-table-column
-        prop="date"
-        label="日期"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="name"
+        prop="username"
         label="姓名"
+        width="100">
+      </el-table-column>
+      <el-table-column
+        prop="email"
+        label="邮箱"
         width="180">
       </el-table-column>
       <el-table-column
-        prop="address"
-        label="地址">
+        prop="mobile"
+        label="电话"
+        width="200">
+      </el-table-column>
+       <el-table-column
+        prop="create_time"
+        label="创建日期"
+        width="150">
+      </el-table-column>
+       <el-table-column
+        label="用户状态"
+        >
+          <template slot-scope="scope">
+            <!-- scope.row就是当前绑定的数据对象 -->
+         <el-switch
+            v-model="scope.row.mg_state"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+      </template>
+      </el-table-column>
+        <el-table-column
+        label="操作" width="300">
+       <template slot-scope="scope">
+        <el-button plain size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+        <el-button plain size="mini" type="danger" icon="el-icon-delete" circle></el-button>
+        <el-button plain size="mini" type="success" icon="el-icon-check" circle></el-button>
+      </template>
+
       </el-table-column>
     </el-table>
 
