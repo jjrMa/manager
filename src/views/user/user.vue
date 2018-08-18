@@ -19,7 +19,7 @@
 
     <!-- 表格 -->
        <el-table
-      :data="tableData"
+      :data="list"
       style="width: 100%">
       <!-- 序号 -->
       <el-table-column
@@ -50,23 +50,50 @@
 export default {
   data () {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      // tableData: [{
+      //   date: '2016-05-02',
+      //   name: '王小虎',
+      //   address: '上海市普陀区金沙江路 1518 弄'
+      // }, {
+      //   date: '2016-05-04',
+      //   name: '王小虎',
+      //   address: '上海市普陀区金沙江路 1517 弄'
+      // }, {
+      //   date: '2016-05-01',
+      //   name: '王小虎',
+      //   address: '上海市普陀区金沙江路 1519 弄'
+      // }, {
+      //   date: '2016-05-03',
+      //   name: '王小虎',
+      //   address: '上海市普陀区金沙江路 1516 弄'
+      // }]
+      list: []
+    }
+  },
+  created () {
+    this.loadData()
+  },
+  methods: {
+    async loadData () {
+      const res = await this.$http.get('users', {
+        headers: {
+          Authorization: window.sessionStorage.getItem('token')
+        },
+        params: {
+          pagenum: 1,
+          pagesize: 10
+        }
+      })
+      // console.log(res)
+
+      const data = res.data
+      const { meta: { msg, status } } = data
+      if (status === 200) {
+        const {data: {users}} = data
+        this.list = users
+      } else {
+        this.$message.error(msg)
+      }
     }
   }
 }
