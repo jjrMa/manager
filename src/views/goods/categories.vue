@@ -71,14 +71,19 @@ export default {
   },
   methods: {
     async loadData () {
-      const { data: resData } = await this.$http.get('categories?type=3')
-      const { data } = resData
-      this.list = data
+      const { data: resData } = await this.$http.get(`categories?type=3&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
+      const {data: { result, total }} = resData
+      this.list = result
+      this.total = total
     },
     handleSizeChange (val) {
+      this.pagesize = val
+      this.loadData()
       console.log(`每页 ${val} 条`)
     },
     handleCurrentChange (val) {
+      this.pagenum = val
+      this.loadData()
       console.log(`当前页: ${val}`)
     }
   }
