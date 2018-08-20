@@ -81,6 +81,7 @@
       >
 
         <el-tree
+        ref="tree"
         v-loading="loadingTree"
         :data="treedata"
         :props="defaultProps"
@@ -91,7 +92,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="handleSetRoles">确 定</el-button>
       </span>
     </el-dialog>
   </el-card>
@@ -109,15 +110,37 @@ export default {
         children: 'children',
         label: 'authName'
       },
-      checkedList: []
+      checkedList: [],
+      currentRoleId: -1
     }
   },
   created () {
     this.loadData()
   },
   methods: {
+    // 点击确定按钮,更新用户权限
+    async handleSetRoles () {
+      // 获取被选这个权限的id
+      const checkedKeys = this.$refs.tree.getCheckedKeys()
+      // 获取半选中权限的节点的id
+      const halfCheckedKeys = this.$refs.tree.getHalfCheckedKeys()
+      const newArray = [...checkedKeys, ...halfCheckedKeys]
+      // console.log(newArray)
+      const {data: resData} = await this.$http.post(`roles/${this.currentRoleId}/rights`, {
+        rids: newArray.join(',')
+      })
+      const {meta: { status, msg }} = resData
+      if (status === 200) {
+        this.dialogVisible = false
+        this.$message.success(msg)
+        this.loadData()
+      } else {
+        this.$message.error(msg)
+      }
+    },
     handleShowRightsDialog (role) {
       this.dialogVisible = true
+      this.currentRoleId = role.id
       // console.log(role)
       const arr = []
       role.children.forEach((item1) => {
