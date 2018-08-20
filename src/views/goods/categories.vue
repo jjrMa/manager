@@ -3,7 +3,7 @@
   <cus-Breadcrumb level1='商品管理' level2='商品分类'></cus-Breadcrumb>
   <el-row class="row-add">
         <el-col :span="24">
-          <el-button type="success" plain>添加分类</el-button>
+          <el-button @click="handleShowAddDialog" type="success" plain>添加分类</el-button>
         </el-col>
   </el-row>
   <!-- 表格 -->
@@ -69,6 +69,33 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+
+    <!-- 添加商品的对话框 -->
+    <el-dialog title="添加商品分类" :visible.sync="addDialogFormVisible">
+      <el-form :model="form" label-width="150">
+        <el-form-item label="分类名称">
+          <el-input v-model="form.cat_name" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="分类">
+          <!-- 这里不用自带的下拉框, 找el-ui中的级联选择器 -->
+          <el-cascader
+            clearable
+            change-on-select
+            expand-trigger="hover"
+            :options="options"
+            v-model="selectedOptions"
+            :props="defaultProps"
+          >
+          </el-cascader>
+        </el-form-item>
+      </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogFormVisible = false">取 消</el-button>
+      <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+    </div>
+</el-dialog>
+
 </el-card>
 </template>
 
@@ -80,13 +107,36 @@ export default {
       list: [],
       pagenum: 1,
       pagesize: 5,
-      total: 0
+      total: 0,
+      addDialogFormVisible: true,
+      form: {
+        cat_pid: -1,
+        cat_name: '',
+        cat_level: 0
+      },
+      // 绑定层级下拉框
+      selectedOptions: [],
+      // 层级下拉框中的数据
+      options: [],
+      // 层级下拉框中的配置
+      defaultProps: {
+        value: 'cat_id',
+        label: 'cat_name',
+        children: 'children'
+      }
     }
   },
   created () {
     this.loadData()
   },
   methods: {
+    async handleShowAddDialog () {
+      // 点击添加按钮, 显示对话框
+      this.addDialogFormVisible = true
+      // 加载层级数据
+      const { data: resData } = await this.$http.get(`categories?type=2`)
+      this.options = resData.data
+    },
     async loadData () {
       const { data: resData } = await this.$http.get(`categories?type=3&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
       const {data: { result, total }} = resData
