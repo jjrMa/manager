@@ -31,8 +31,13 @@
         label="角色描述"
         width="180">
       </el-table-column>
-      <el-table-column
+     <el-table-column
         label="操作">
+        <template slot-scope="scope">
+          <el-button  plain size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+          <el-button  plain size="mini" type="danger" icon="el-icon-delete" circle></el-button>
+          <el-button   plain size="mini" type="success" icon="el-icon-check" circle></el-button>
+        </template>
       </el-table-column>
     </el-table>
   </el-card>
@@ -41,7 +46,8 @@
 export default {
   data () {
     return {
-      list: []
+      list: [],
+      loading: true
     }
   },
   created () {
@@ -49,8 +55,10 @@ export default {
   },
   methods: {
     async loadData () {
+      this.loading = true
       const { data: resData } = await this.$http.get('roles')
       const { data, meta: { status, msg } } = resData
+      this.loading = false
       if (status === 200) {
         this.list = data
       } else {
