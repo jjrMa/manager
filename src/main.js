@@ -8,7 +8,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 import '@/assets/css/style.css'
 import http from '@/plugins/http.js'
 import moment from 'moment'
-
+import CusBread from '@/components/common/cusBreadcrumb'
+Vue.component(CusBread.name, CusBread)
 Vue.use(ElementUI)
 Vue.use(http)
 Vue.config.productionTip = false
