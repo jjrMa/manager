@@ -17,6 +17,34 @@
        <el-table
       :data="list"
       style="width: 100%">
+        <!-- 展开列 -->
+       <el-table-column type="expand">
+         <template slot-scope="scope">
+           <!-- <el-tag @click="handleClose" type="success"></el-tag> -->
+           <!-- 一级权限 -->
+           <el-row class="level1" v-for="item1 in scope.row.children"
+           :key="item1.id">
+             <el-col :span="4">
+               <el-tag closable>{{item1.authName}}</el-tag>
+              <i class="el-icon-arrow-right"></i>
+             </el-col>
+             <!-- 二级权限 -->
+             <el-col :span="20">
+                  <el-row v-for="item2 in item1.children"
+              :key="item2.id">
+                <el-col :span="4">
+                  <el-tag closable type="success">{{item2.authName}}</el-tag>
+                  <i class="el-icon-arrow-right"></i>
+                </el-col>
+                <!-- 三级权限 -->
+                <el-col :span="20">
+                  <el-tag class="level3" closable type="warning" v-for="item3 in item2.children" :key="item3.id">{{item3.authName}}</el-tag>
+                </el-col>
+              </el-row>
+             </el-col>
+           </el-row>
+         </template>
+       </el-table-column>
        <el-table-column
        type="index"
         width="50">
@@ -54,6 +82,9 @@ export default {
     this.loadData()
   },
   methods: {
+    handleClose () {
+
+    },
     async loadData () {
       this.loading = true
       const { data: resData } = await this.$http.get('roles')
