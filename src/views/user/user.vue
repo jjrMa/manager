@@ -176,7 +176,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="setRoleDialogFormVisible = false">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button @click="handleSetRole" type="primary">确 定</el-button>
       </div>
 </el-dialog>
 
@@ -232,6 +232,7 @@ export default {
       setRoleDialogFormVisible: false,
       currentUsername: '',
       currentRoleId: -1,
+      currentUserId: -1,
       roles: []
     }
   },
@@ -239,8 +240,28 @@ export default {
     this.loadData()
   },
   methods: {
+    // 分配角色
+    async handleSetRole () {
+      this.$http.defaults.headers.common['Authorization'] = sessionStorage.getItem('token')
+      const res = await this.$http.put(`users/${this.currentUserId}/role`, {
+        rid: this.currentRoleId
+      })
+      const data = res.data
+      const { meta: { status, msg } } = data
+      if (status === 200) {
+        this.setRoleDialogFormVisible = false
+        this.$message.success(msg)
+        // 重置数据
+        this.currentUsername = ''
+        this.currentRoleId = -1
+        this.currentUserId = -1
+      } else {
+        this.$message.error(msg)
+      }
+    },
     // 获取角色名称
     async handleShowSetRole (user) {
+      this.currentUserId = user.id
       this.currentUsername = user.username
       this.setRoleDialogFormVisible = true
       this.$http.defaults.headers.common['Authorization'] = sessionStorage.getItem('token')
