@@ -68,10 +68,32 @@
         <template slot-scope="scope">
           <el-button  plain size="mini" type="primary" icon="el-icon-edit" circle></el-button>
           <el-button  plain size="mini" type="danger" icon="el-icon-delete" circle></el-button>
-          <el-button   plain size="mini" type="success" icon="el-icon-check" circle></el-button>
+          <el-button  @click="handleShowRightsDialog(scope.row)" plain size="mini" type="success" icon="el-icon-check" circle></el-button>
         </template>
       </el-table-column>
     </el-table>
+
+     <!-- 分配权限对话框 -->
+        <el-dialog
+      @open="handleOpenDialog"
+      title="分配权限"
+      :visible.sync="dialogVisible"
+      >
+
+        <el-tree
+        v-loading="loadingTree"
+        :data="treedata"
+        :props="defaultProps"
+        node-key="id"
+        :default-checked-keys="checkedList"
+        show-checkbox
+        default-expand-all></el-tree>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </el-card>
 </template>
 <script>
@@ -79,13 +101,42 @@ export default {
   data () {
     return {
       list: [],
-      loading: true
+      loading: true,
+      loadingTree: true,
+      dialogVisible: false,
+      treedata: [],
+      defaultProps: {
+        children: 'children',
+        label: 'authName'
+      },
+      checkedList: []
     }
   },
   created () {
     this.loadData()
   },
   methods: {
+    handleShowRightsDialog (role) {
+      this.dialogVisible = true
+      // console.log(role)
+      const arr = []
+      role.children.forEach((item1) => {
+        item1.children.forEach((item2) => {
+          item2.children.forEach((item3) => {
+            arr.push(item3.id)
+          })
+        })
+      })
+      this.checkedList = arr
+      // console.log(this.checkedList)
+    },
+    async handleOpenDialog () {
+      this.loadingTree = true
+      const { data: resData } = await this.$http.get('rights/tree')
+      this.loadingTree = false
+      const { data } = resData
+      this.treedata = data
+    },
     async handleClose (role, rightId) {
       // console.log(role)
       const { data: resData } = await this.$http.delete(`roles/${role.id}/rights/${rightId}`)
