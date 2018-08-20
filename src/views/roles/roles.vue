@@ -25,7 +25,7 @@
            <el-row class="level1" v-for="item1 in scope.row.children"
            :key="item1.id">
              <el-col :span="4">
-               <el-tag closable>{{item1.authName}}</el-tag>
+               <el-tag @close="handleClose(scope.row, item1.id)" closable>{{item1.authName}}</el-tag>
               <i class="el-icon-arrow-right"></i>
              </el-col>
              <!-- 二级权限 -->
@@ -33,12 +33,12 @@
                   <el-row v-for="item2 in item1.children"
               :key="item2.id">
                 <el-col :span="4">
-                  <el-tag closable type="success">{{item2.authName}}</el-tag>
+                  <el-tag @close="handleClose(scope.row, item2.id)" closable type="success">{{item2.authName}}</el-tag>
                   <i class="el-icon-arrow-right"></i>
                 </el-col>
                 <!-- 三级权限 -->
                 <el-col :span="20">
-                  <el-tag class="level3" closable type="warning" v-for="item3 in item2.children" :key="item3.id">{{item3.authName}}</el-tag>
+                  <el-tag @close="handleClose(scope.row, item3.id)" class="level3" closable type="warning" v-for="item3 in item2.children" :key="item3.id">{{item3.authName}}</el-tag>
                 </el-col>
               </el-row>
              </el-col>
@@ -86,8 +86,16 @@ export default {
     this.loadData()
   },
   methods: {
-    handleClose () {
-
+    async handleClose (role, rightId) {
+      // console.log(role)
+      const { data: resData } = await this.$http.delete(`roles/${role.id}/rights/${rightId}`)
+      const { data, meta: { status, msg } } = resData
+      if (status === 200) {
+        this.$message.success(msg)
+        role.children = data
+      } else {
+        this.$message.error(msg)
+      }
     },
     async loadData () {
       this.loading = true
