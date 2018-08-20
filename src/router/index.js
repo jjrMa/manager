@@ -6,10 +6,11 @@ import Home from '@/views/home'
 import User from '@/views/user/user'
 import Rights from '@/views/roles/rights'
 import Roles from '@/views/roles/roles'
+import { Message } from 'element-ui'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [{
     name: 'home',
     path: '/',
@@ -35,3 +36,19 @@ export default new Router({
   }
   ]
 })
+// 路由的前置守卫
+router.beforeEach((to, from, next) => {
+  // console.log(to, from)
+  if (to.name === 'login') {
+    next()
+  } else {
+    const token = sessionStorage.getItem('token')
+    if (!token) {
+      router.push({ 'name': 'login' })
+      Message.warning('请先登录')
+      return
+    }
+    next()
+  }
+})
+export default router
