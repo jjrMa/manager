@@ -121,7 +121,7 @@ export default {
       pagenum: 1,
       pagesize: 5,
       total: 0,
-      addDialogFormVisible: true,
+      addDialogFormVisible: false,
       editDialogFormVisible: false,
       form: {
         cat_pid: -1,
@@ -146,7 +146,15 @@ export default {
   methods: {
     // 点击编辑对话框的确定按钮, 发送编辑分类的网络请求
     async handleEdit () {
-      // 后台接口有问题, 待改~
+      const res = await this.$http.put(`categories/${this.form.cat_id}`, this.form)
+      const { meta } = res.data
+      if (meta.status === 200) {
+        this.editDialogFormVisible = false
+        this.$message.success(meta.msg)
+        this.loadData()
+      } else {
+        this.$message.error(meta.msg)
+      }
     },
     // 点击编辑按钮,弹出编辑对话框
     handleOpenEdit (cat) {
