@@ -8,7 +8,7 @@
       <el-input v-model="searchValue" class="searchInput" clearable placeholder="请输入内容">
          <el-button @click="handleSearch" slot="append" icon="el-icon-search"></el-button>
       </el-input>
-      <el-button @click="addGoodDialogFormVisible = true" type="success" plain>添加商品</el-button>
+      <el-button @click="$router.push({name:'goodsadd'})" type="success" plain>添加商品</el-button>
     </el-col>
   </el-row>
 
@@ -58,9 +58,18 @@
         <el-button  plain size="mini" type="danger" icon="el-icon-delete" circle></el-button>
         </template>
       </el-table-column>
-
   </el-table>
 
+  <!-- 分页组件 -->
+  <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagenum"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
 </el-card>
 </template>
 
@@ -70,21 +79,36 @@ export default {
     return {
       searchValue: '',
       loading: false,
-      list: []
+      list: [],
+      pagenum: 1,
+      pagesize: 10,
+      total: 0
     }
   },
   created () {
     this.loadData()
   },
   methods: {
+    handleSizeChange (val) {
+      // console.log(`每页 ${val} 条`)
+      this.pagesize = val
+      this.pagenum = 1
+      this.loadData()
+    },
+    handleCurrentChange (val) {
+      // console.log(`当前页: ${val}`)
+      this.pagenum = val
+      this.loadData()
+    },
     handleSearch () {
 
     },
     async loadData () {
       this.loading = true
-      const { data: resData } = await this.$http.get(`goods?pagenum=4&pagesize=10`)
-      this.loading = false
+      const { data: resData } = await this.$http.get(`goods?pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
+      this.total = resData.data.total
       this.list = resData.data.goods
+      this.loading = false
       // console.log(this.list)
     }
   }

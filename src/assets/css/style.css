@@ -1,5 +1,6 @@
 html,
-body {
+body,
+h2 {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -7,4 +8,8 @@ body {
 
 .box-card {
     height: 100%;
+}
+
+.el-step__title {
+    font-size: 10px
 }
