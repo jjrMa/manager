@@ -5,10 +5,10 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import '@/assets/css/style.css'
 import http from '@/plugins/http.js'
 import moment from 'moment'
 import CusBreadcrumb from '@/views/components/common/cusBreadcrumb'
+import '@/assets/css/style.css'
 
 Vue.component(CusBreadcrumb.name, CusBreadcrumb)
 Vue.use(ElementUI)

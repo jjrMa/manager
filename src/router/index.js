@@ -8,6 +8,7 @@ import Rights from '@/views/roles/rights'
 import Roles from '@/views/roles/roles'
 import { Message } from 'element-ui'
 import Categories from '@/views/goods/categories'
+import Goodslist from '@/views/goods/goodslist'
 
 Vue.use(Router)
 
@@ -32,6 +33,10 @@ const router = new Router({
       name: 'categories',
       path: '/categories',
       component: Categories
+    }, {
+      name: 'goodslist',
+      path: '/goods',
+      component: Goodslist
     }]
   },
   {
@@ -43,7 +48,7 @@ const router = new Router({
 })
 // 路由的前置守卫
 router.beforeEach((to, from, next) => {
-  console.log(to, from)
+  // console.log(to, from)
   if (to.name === 'login') {
     next()
   } else {
