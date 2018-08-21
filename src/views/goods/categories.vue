@@ -54,8 +54,8 @@
         prop="address"
         label="操作">
         <template slot-scope="scope">
-          <el-button  plain size="mini" type="primary" icon="el-icon-edit" circle></el-button>
-          <el-button  plain size="mini" type="danger" icon="el-icon-delete" circle></el-button>
+          <el-button  @click="handleOpenEdit(scope.row)" plain size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+          <el-button  @click="handleDelete(scope.row.cat_id)" plain size="mini" type="danger" icon="el-icon-delete" circle></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -91,8 +91,21 @@
         </el-form-item>
       </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
+      <el-button @click="addDialogFormVisible = false">取 消</el-button>
       <el-button type="primary" @click="handleAdd">确 定</el-button>
+    </div>
+</el-dialog>
+
+    <!-- 添加修改分类的对话框 -->
+    <el-dialog title="修改商品分类" :visible.sync="editDialogFormVisible">
+      <el-form :model="form" label-width="100px">
+        <el-form-item label="分类名称">
+          <el-input v-model="form.cat_name" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="editDialogFormVisible = false">取 消</el-button>
+      <el-button type="primary" @click="handleEdit">确 定</el-button>
     </div>
 </el-dialog>
 
@@ -109,6 +122,7 @@ export default {
       pagesize: 5,
       total: 0,
       addDialogFormVisible: true,
+      editDialogFormVisible: false,
       form: {
         cat_pid: -1,
         cat_name: '',
@@ -130,6 +144,39 @@ export default {
     this.loadData()
   },
   methods: {
+    // 点击编辑对话框的确定按钮, 发送编辑分类的网络请求
+    async handleEdit () {
+      // 后台接口有问题, 待改~
+    },
+    // 点击编辑按钮,弹出编辑对话框
+    handleOpenEdit (cat) {
+      this.form.cat_name = cat.cat_name
+      this.form.cat_id = cat.cat_id
+      console.log(this.form)
+      this.editDialogFormVisible = true
+    },
+    // 点击删除按钮,弹出删除提示框,发送删除请求
+    async handleDelete (catId) {
+      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        // 发送删除的网络请求
+        const { data: resData } = await this.$http.delete(`categories/${catId}`)
+        if (resData.meta.status === 200) {
+          this.$message.success('删除成功')
+          this.loadData()
+        } else {
+          this.$message.error(resData.meta.msg)
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
     // 点击对话框的确定按钮, 添加商品分类信息
     async handleAdd () {
       // cat_level cat_pid
