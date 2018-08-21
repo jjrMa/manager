@@ -15,7 +15,7 @@
         </el-col>
       </el-row>
     </el-header>
-    <el-container>
+    <el-container class="container">
       <el-aside class="aside" width="200px">
         <!-- default-active:默认展开项
           :unique-opened: 只允许同时展开一项
