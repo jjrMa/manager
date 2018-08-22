@@ -50,7 +50,11 @@
         </el-checkbox-group>
         </el-form-item>
       </el-tab-pane>
-      <el-tab-pane name="3" label="商品属性">商品属性</el-tab-pane>
+      <el-tab-pane name="3" label="商品属性">
+        <el-form-item v-for="item in staticParams" :key="item.attr_id" :label="item.attr_name">
+          <el-input v-model="item.attr_vals"></el-input>
+        </el-form-item>
+      </el-tab-pane>
       <el-tab-pane name="4" label="商品图片">商品图片</el-tab-pane>
       <el-tab-pane name="5" label="商品内容">商品内容</el-tab-pane>
     </el-tabs>
@@ -97,13 +101,22 @@ export default {
           return
         }
       }
-      if (this.active === '1') {
-        const { data: resData } = await this.$http.get(`categories/${this.selectedOptions[2]}/attributes?sel=many`)
+      // console.log(this.active)
+      const sel = this.active === '2' ? 'many' : 'only'
+      // console.log(sel)
+      const { data: resData } = await this.$http.get(`categories/${this.selectedOptions[2]}/attributes?sel=${sel}`)
+      if (this.active === '2') {
         this.dynamicsParams = resData.data
-        console.log(this.dynamicsParams)
+        // console.log('动态参数')
+        // console.log(this.dynamicsParams)
         this.dynamicsParams.forEach((item) => {
           item.attr_vals = item.attr_vals.trim().length === 0 ? [] : item.attr_vals.trim().split(',')
         })
+      }
+      if (this.active === '3') {
+        // console.log('静态参数')
+        this.staticParams = resData.data
+        // console.log(this.staticParams)
       }
     },
     handleChange () {
