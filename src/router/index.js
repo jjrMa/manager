@@ -10,6 +10,7 @@ import { Message } from 'element-ui'
 import Categories from '@/views/goods/categories'
 import Goodslist from '@/views/goods/goodslist'
 import GoodsAdd from '@/views/goods/goodsadd'
+import Params from '@/views/goods/params'
 
 Vue.use(Router)
 
@@ -42,6 +43,10 @@ const router = new Router({
       name: 'goodsadd',
       path: '/goodsadd',
       component: GoodsAdd
+    }, {
+      name: 'params',
+      path: '/params',
+      component: Params
     }]
   },
   {
