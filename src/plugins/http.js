@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import { Message } from 'element-ui'
 // const httpHelper = {}
 // 配置Vue插件
 // httpHelper.install = function fn (Vue) {
@@ -23,6 +23,10 @@ httpAxios.install = function (Vue) {
   })
 
   instance.interceptors.response.use(function (response) {
+    const { data: { meta: { status, msg } } } = response
+    if (status !== '200' || status !== '201') {
+      Message.error(msg)
+    }
     return response
   })
   Vue.prototype.$http = instance
