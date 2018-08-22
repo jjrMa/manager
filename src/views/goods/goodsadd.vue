@@ -63,20 +63,31 @@
           action="http://127.0.0.1:8888/api/private/v1/upload"
           :on-remove="handleRemove"
           :on-success="handleSuccess"
-          :file-list="fileList"
           :headers="tokenHeader"
           list-type="picture">
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
       </el-tab-pane>
-      <el-tab-pane name="5" label="商品内容">商品内容</el-tab-pane>
+      <el-tab-pane name="5" label="商品内容">
+        <el-button>添加商品</el-button>
+        <quillEditor class="editor" v-model="form.goodsintro"></quillEditor>
+      </el-tab-pane>
     </el-tabs>
   </el-form>
 </el-card>
 </template>
 
 <script>
+import {quillEditor} from 'vue-quill-editor'
+
+// require styles
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 export default {
+  components: {
+    quillEditor
+  },
   data () {
     return {
       active: '1',
@@ -87,7 +98,8 @@ export default {
         goods_weight: '',
         // 分类id
         goods_cat: '',
-        pics: []
+        pics: [],
+        goodsintro: ''
       },
       // 层级下拉框的数据源
       options: [],
@@ -116,10 +128,10 @@ export default {
         return item.pic === file.response.data.tem_path
       })
       this.form.pics.splice(index, 1)
-      console.log(this.form)
+      // console.log(this.form)
     },
     handleSuccess (response, file, fileList) {
-      const { meta, data } = response
+      const { meta } = response
 
       if (meta.status === 200) {
         this.$message.success('图片上传成功')
@@ -179,5 +191,8 @@ export default {
 .form{
   height: 400px;
   overflow: auto;
+}
+.editor{
+  min-height: 400px;
 }
 </style>
