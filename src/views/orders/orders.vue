@@ -93,7 +93,7 @@
 import cityData from './city_data2017_element'
 
 export default {
-  data() {
+  data () {
     return {
       tableData: [],
       pagenum: 1,
@@ -105,11 +105,11 @@ export default {
       addFormVisible: false
     }
   },
-  mounted() {
+  mounted () {
     this.loadData()
   },
   methods: {
-    async loadData() {
+    async loadData () {
       const res = await this.$http.get('/orders', {
         params: {
           pagenum: this.pagenum,
@@ -122,19 +122,19 @@ export default {
         this.total = res.data.data.total
       }
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pagenum = 1
       this.pagesize = val
       this.loadData()
-      console.log(val)
+      // console.log(val)
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.pagenum = val
       this.loadData()
-      console.log(val)
+      // console.log(val)
     },
-    handleChange(val) {
-      console.log(val)
+    handleChange (val) {
+      // console.log(val)
     }
   }
 }
@@ -148,4 +148,3 @@ export default {
   margin-top: 20px;
 }
 </style>
-
