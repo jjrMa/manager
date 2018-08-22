@@ -13,10 +13,11 @@
             expand-trigger="hover"
             @change="handleChange">
       </el-cascader>
-      <el-tabs v-model="activeName">
+      <el-tabs v-model="activeName" @tab-click="handleTabClick">
         <el-tab-pane label="动态参数" name="many">
           <el-button :disabled="isDisabled" type="primary" size="mini">设置动态参数</el-button>
           <el-table
+            height="400px"
             :data="dynamicParams"
             style="width: 100%">
             <el-table-column
@@ -66,16 +67,11 @@
         <el-tab-pane label="静态参数" name="only">
           <el-button :disabled="isDisabled" type="primary" size="mini">设置静态参数</el-button>
           <el-table
+            height="400px"
             :data="staticParams"
             style="width: 100%">
             <el-table-column
-              type="expand"
-              width="40">
-              <template slot-scope="scope"></template>
-            </el-table-column>
-            <el-table-column
-              prop="index"
-              label="#"
+              type="index"
               width="40">
             </el-table-column>
             <el-table-column
@@ -121,6 +117,9 @@ export default {
     this.loadOptions()
   },
   methods: {
+    handleTabClick () {
+      this.loadTableData()
+    },
     async handleClose (row, index) {
       row.params.splice(index, 1)
       // 准备请求的数据
@@ -208,16 +207,20 @@ export default {
       const { data: {data, meta: { status, msg }} } =
       await this.$http.get(`categories/${this.selectedOptions[2]}/attributes?sel=${this.activeName}`)
       if (status === 200) {
-        this.dynamicParams = data
-        // 动态参数attr_vals -> 数组
-        // 在动态参数数组上添加一个属性params 保存
-        this.dynamicParams.forEach((item) => {
-          // console.log(item.attr_vals)
-          const arr = item.attr_vals.trim().split(',').length === 0 ? [] : item.attr_vals.trim().split(',')
-          // 动态给对象添加的成员, 数据绑定有问题, 所以用arr去处理
-          this.$set(item, 'params', arr)
-          // console.log(item.params)
-        })
+        if (this.activeName === 'many') {
+          this.dynamicParams = data
+          // 动态参数attr_vals -> 数组
+          // 在动态参数数组上添加一个属性params 保存
+          this.dynamicParams.forEach((item) => {
+            // console.log(item.attr_vals)
+            const arr = item.attr_vals.trim().split(',').length === 0 ? [] : item.attr_vals.trim().split(',')
+            // 动态给对象添加的成员, 数据绑定有问题, 所以用arr去处理
+            this.$set(item, 'params', arr)
+            // console.log(item.params)
+          })
+        } else {
+          this.staticParams = data
+        }
       } else {
         this.$message.error(msg)
       }
