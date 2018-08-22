@@ -22,7 +22,24 @@
             <el-table-column
               type="expand"
               width="40">
-              <template slot-scope="scope"></template>
+              <template slot-scope="scope">
+                <el-tag
+                  closable
+                  :disable-transitions="false"
+                  @close="handleClose">
+                </el-tag>
+                <el-input
+                  class="input-new-tag"
+                  v-if="inputVisible"
+                  v-model="inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm"
+                  @blur="handleInputConfirm"
+                >
+                </el-input>
+                <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+              </template>
             </el-table-column>
             <el-table-column
               prop="index"
@@ -92,16 +109,30 @@ export default {
       activeName: 'many',
       dynamicParams: [],
       staticParams: [],
-      isDisabled: true
+      isDisabled: true,
+      inputVisible: false,
+      inputValue: ''
     }
   },
   created () {
     this.loadOptions()
   },
   methods: {
+    handleClose () {
+    },
+    showInput () {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    handleInputConfirm () {
+
+    },
     handleChange () {
       if (this.selectedOptions.length === 3) {
         this.isDisabled = false
+        this.loadTableData()
       } else {
         this.isDisabled = true
       }
@@ -110,7 +141,26 @@ export default {
       const { data: {data, meta: { status, msg }} } = await this.$http.get(`categories?type=3`)
       if (status === 200) {
         this.options = data
-        console.log(this.options)
+        // console.log(this.options)
+      } else {
+        this.$message.error(msg)
+      }
+    },
+    async loadTableData () {
+      if (this.selectedOptions.length !== 3) {
+        this.$message.warning('请选择三级分类')
+        return
+      }
+      const { data: {data, meta: { status, msg }} } =
+      await this.$http.get(`categories/${this.selectedOptions[2]}/attributes?sel=${this.activeName}`)
+      if (status === 200) {
+        this.dynamicParams = data
+        // 动态参数attr_vals -> 数组
+        // 在动态参数数组上添加一个属性params 保存
+        this.dynamicParams.forEach((item) => {
+          console.log(item.attr_vals)
+          item.params = item.attr_vals.trim().split(',').length ? [] : item.attr_vals.trim().split(',')
+        })
       } else {
         this.$message.error(msg)
       }
