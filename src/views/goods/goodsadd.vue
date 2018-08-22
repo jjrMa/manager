@@ -69,8 +69,8 @@
         </el-upload>
       </el-tab-pane>
       <el-tab-pane name="5" label="商品内容">
-        <el-button>添加商品</el-button>
-        <quillEditor class="editor" v-model="form.goodsintro"></quillEditor>
+        <el-button @click="handleAdd">添加商品</el-button>
+        <quillEditor class="editor" v-model="form.goodsintroduce"></quillEditor>
       </el-tab-pane>
     </el-tabs>
   </el-form>
@@ -99,7 +99,8 @@ export default {
         // 分类id
         goods_cat: '',
         pics: [],
-        goodsintro: ''
+        goods_introduce: '',
+        attrs: ''
       },
       // 层级下拉框的数据源
       options: [],
@@ -123,6 +124,30 @@ export default {
     this.loadOptions()
   },
   methods: {
+    async handleAdd () {
+      this.form.goods_cat = this.selectedOptions.join(',')
+      const dy = this.dynamicsParams
+      const st = this.staticParams
+      const arr1 = dy.map((item) => {
+        item.attr_vals = item.attr_vals.join(',')
+        return {attr_id: item.attr_id, attr_value: item.attr_vals}
+      })
+      const arr2 = st.map((item) => {
+        item.attr_vals = item.attr_vals.join(',')
+        return {attr_id: item.attr_id, attr_value: item.attr_vals}
+      })
+      this.form.attrs = [...arr1, ...arr2]
+      console.log(this.form.attrs)
+      const {data: {meta: {status, msg}}} = await this.$http.post('goods', this.form)
+      if (status === 201) {
+        this.$message.success(msg)
+        this.$router.push({
+          name: 'goodslist'
+        })
+      } else {
+        this.$message.error(msg)
+      }
+    },
     handleRemove (file, fileList) {
       const index = this.form.pics.findIndex((item) => {
         return item.pic === file.response.data.tem_path
