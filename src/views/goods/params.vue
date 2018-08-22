@@ -24,9 +24,12 @@
               width="40">
               <template slot-scope="scope">
                 <el-tag
+                  v-for="(item, index) in scope.row.params"
+                  :key="index"
                   closable
                   :disable-transitions="false"
-                  @close="handleClose">
+                  @close="handleClose(scope.row, index)">
+                  {{item}}
                 </el-tag>
                 <el-input
                   class="input-new-tag"
@@ -34,8 +37,8 @@
                   v-model="inputValue"
                   ref="saveTagInput"
                   size="small"
-                  @keyup.enter.native="handleInputConfirm"
-                  @blur="handleInputConfirm"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
                 >
                 </el-input>
                 <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
@@ -118,7 +121,30 @@ export default {
     this.loadOptions()
   },
   methods: {
-    handleClose () {
+    async handleClose (row, index) {
+      row.params.splice(index, 1)
+      // 准备请求的数据
+      // 准备url上需要的id
+      const catId = row.cat_id
+      const attrId = row.attr_id
+      // console.log(catId, attrId)
+      // put携带的对象
+      const putData = {
+        attr_name: row.attr_name,
+        attr_sel: row.attr_sel,
+        attr_vals: row.params.join(',')
+      }
+      // 让数据一致
+      row.attr_vals = putData.attr_vals
+      // 发送请求
+      const url = `/categories/${catId}/attributes/${attrId}`
+      const res = await this.$http.put(url, putData)
+      // console.log(res)
+      if (res.data.meta.status === 200) {
+        this.$message.success('更新成功')
+      } else {
+        this.$message.error('更新失败')
+      }
     },
     showInput () {
       this.inputVisible = true
@@ -126,8 +152,36 @@ export default {
         this.$refs.saveTagInput.$refs.input.focus()
       })
     },
-    handleInputConfirm () {
-
+    async handleInputConfirm (row) {
+      if (this.inputValue.length === 0) {
+        return
+      }
+      row.params.push(this.inputValue)
+      // 清空文本框 显示按钮 隐藏文本域
+      this.inputValue = ''
+      this.inputVisible = false
+      // 准备请求的数据
+      // 准备url上需要的id
+      const catId = row.cat_id
+      const attrId = row.attr_id
+      // console.log(catId, attrId)
+      // put携带的对象
+      const putData = {
+        attr_name: row.attr_name,
+        attr_sel: row.attr_sel,
+        attr_vals: row.params.join(',')
+      }
+      // 让数据一致
+      row.attr_vals = putData.attr_vals
+      // 发送请求
+      const url = `/categories/${catId}/attributes/${attrId}`
+      const res = await this.$http.put(url, putData)
+      // console.log(res)
+      if (res.data.meta.status === 200) {
+        this.$message.success('更新成功')
+      } else {
+        this.$message.error('更新失败')
+      }
     },
     handleChange () {
       if (this.selectedOptions.length === 3) {
@@ -158,8 +212,11 @@ export default {
         // 动态参数attr_vals -> 数组
         // 在动态参数数组上添加一个属性params 保存
         this.dynamicParams.forEach((item) => {
-          console.log(item.attr_vals)
-          item.params = item.attr_vals.trim().split(',').length ? [] : item.attr_vals.trim().split(',')
+          // console.log(item.attr_vals)
+          const arr = item.attr_vals.trim().split(',').length === 0 ? [] : item.attr_vals.trim().split(',')
+          // 动态给对象添加的成员, 数据绑定有问题, 所以用arr去处理
+          this.$set(item, 'params', arr)
+          // console.log(item.params)
         })
       } else {
         this.$message.error(msg)
@@ -177,5 +234,8 @@ export default {
   margin-top: 16px;
   margin-bottom: 20px;
   font-size: 14px;
+}
+.input-new-tag{
+  width: 80px;
 }
 </style>
