@@ -55,7 +55,20 @@
           <el-input v-model="item.attr_vals"></el-input>
         </el-form-item>
       </el-tab-pane>
-      <el-tab-pane name="4" label="商品图片">商品图片</el-tab-pane>
+      <el-tab-pane name="4" label="商品图片">
+        <!-- action
+          必须设置全路径
+          必须设置token -->
+        <el-upload
+          action="http://127.0.0.1:8888/api/private/v1/upload"
+          :on-remove="handleRemove"
+          :on-success="handleSuccess"
+          :file-list="fileList"
+          :headers="tokenHeader"
+          list-type="picture">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+      </el-tab-pane>
       <el-tab-pane name="5" label="商品内容">商品内容</el-tab-pane>
     </el-tabs>
   </el-form>
@@ -73,7 +86,8 @@ export default {
         goods_number: '',
         goods_weight: '',
         // 分类id
-        goods_cat: ''
+        goods_cat: '',
+        pics: []
       },
       // 层级下拉框的数据源
       options: [],
@@ -87,13 +101,35 @@ export default {
       selectedOptions: [],
       checkList: [],
       dynamicsParams: [],
-      staticParams: []
+      staticParams: [],
+      tokenHeader: {
+        'Authorization': sessionStorage.getItem('token')
+      }
     }
   },
   created () {
     this.loadOptions()
   },
   methods: {
+    handleRemove (file, fileList) {
+      const index = this.form.pics.findIndex((item) => {
+        return item.pic === file.response.data.tem_path
+      })
+      this.form.pics.splice(index, 1)
+      console.log(this.form)
+    },
+    handleSuccess (response, file, fileList) {
+      const { meta, data } = response
+
+      if (meta.status === 200) {
+        this.$message.success('图片上传成功')
+        this.form.pics.push({
+          pic: response.data.tmp_path
+        })
+      } else {
+        this.$message.error(meta.msg)
+      }
+    },
     async handleTabClick () {
       if (this.active === '2' || this.active === '3') {
         if (this.selectedOptions.length !== 3) {
