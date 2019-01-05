@@ -1,6 +1,5 @@
 <template>
   <div class="login-wrap">
-
     <el-form class="login-form" label-position="top" label-width="80px" :model="formData">
       <h2>用户登录</h2>
       <el-form-item label="用户名">
@@ -28,32 +27,18 @@ export default {
     async handleLogin () {
       const res = await this.$http.post('login', this.formData)
       const data = res.data
-      const { meta: { status, msg } } = data
+      const {
+        meta: { status, msg }
+      } = data
       if (status === 200) {
         const token = data.data.token
-        console.log(token)
-
         sessionStorage.setItem('token', token)
-        this.$router.push({name: 'home'})
+        this.$router.push({ name: 'home' })
         // this.$message.success(msg)
       } else {
         this.$message.error(msg)
       }
     }
-    // handleLogin () {
-    //   this.$http.post('login', this.formData)
-    //     .then((res) => {
-    //       const data = res.data
-    //       const {meta: {status, msg}} = data
-    //       if (status === 200) {
-    //         const token = data.data.token
-    //         sessionStorage.setItem('token', token)
-    //         this.$message.success(msg)
-    //       } else {
-    //         this.$message.error(msg)
-    //       }
-    //     })
-    // }
   }
 }
 </script>
