@@ -133,7 +133,6 @@ export default {
 
 .main {
   background-color: #e9eef3;
-  height: 100%;
 }
 .header .middle {
   line-height: 60px;

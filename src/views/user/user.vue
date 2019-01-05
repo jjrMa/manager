@@ -1,11 +1,7 @@
 <template>
   <el-card class="box-card">
     <!-- 面包屑 -->
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    <my-Bread level1="用户管理" level="‘用户列表"></my-Bread>
 
     <!-- 搜索框 -->
     <el-row class="searchArea">
@@ -163,23 +159,6 @@
 export default {
   data () {
     return {
-      // tableData: [{
-      //   date: '2016-05-02',
-      //   name: '王小虎',
-      //   address: '上海市普陀区金沙江路 1518 弄'
-      // }, {
-      //   date: '2016-05-04',
-      //   name: '王小虎',
-      //   address: '上海市普陀区金沙江路 1517 弄'
-      // }, {
-      //   date: '2016-05-01',
-      //   name: '王小虎',
-      //   address: '上海市普陀区金沙江路 1519 弄'
-      // }, {
-      //   date: '2016-05-03',
-      //   name: '王小虎',
-      //   address: '上海市普陀区金沙江路 1516 弄'
-      // }]
       list: [],
       loading: true,
       // 分页相关的属性
@@ -435,28 +414,6 @@ export default {
         this.$message.error(msg)
       }
     }
-    // async loadData () {
-    //   this.loading = true
-    //   const res = await this.$http.get('users', {
-    //     headers: {
-    //       Authorization: window.sessionStorage.getItem('token')
-    //     },
-    //     params: {
-    //       pagenum: 1,
-    //       pagesize: 10
-    //     }
-    //   })
-    //   // console.log(res)
-    //   this.loading = false
-    //   const data = res.data
-    //   const { meta: { msg, status } } = data
-    //   if (status === 200) {
-    //     const { data: { users } } = data
-    //     this.list = users
-    //   } else {
-    //     this.$message.error(msg)
-    //   }
-    // }
   }
 }
 </script>
@@ -468,5 +425,8 @@ export default {
 }
 .searchArea .searchInput {
   width: 350px;
+}
+.box-card[data-v-82ea5b90] {
+  height: 100%;
 }
 </style>

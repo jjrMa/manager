@@ -7,10 +7,10 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import http from '@/plugins/http.js'
 import moment from 'moment'
-import CusBreadcrumb from '@/views/components/common/cusBreadcrumb'
 import '@/assets/css/style.css'
+import myBread from '@/views/components/common/my-bread'
 
-Vue.component(CusBreadcrumb.name, CusBreadcrumb)
+Vue.component(myBread.name, myBread)
 Vue.use(ElementUI)
 Vue.use(http)
 Vue.config.productionTip = false
@@ -24,6 +24,8 @@ Vue.filter('fmtDate', (value, fmtString) => {
 new Vue({
   el: '#app',
   router,
-  components: { App },
+  components: {
+    App
+  },
   template: '<App/>'
 })
